@@ -110,7 +110,7 @@ class DefaultExtension extends MProvider {
 
     async getDetail(url) {
         url = url.replace(this.source.baseUrl,"")
-        const viewType = this.getPreference("mangafire_pref_content_view")
+        const viewType = this.getPreference("mangafire_pref_content_view") || "chapter";
         const id = url.split(".").pop();
         const detail = {};
 
@@ -125,10 +125,11 @@ class DefaultExtension extends MProvider {
         detail.imageUrl = infoDoc.selectFirst("div.poster img").getSrc;
         detail.author = sidebar[0].selectFirst("a").text;
         detail.description = infoDoc.selectFirst("div#synopsis").text.trim();
-        detail.genre = sidebar[2].select("a");
-        detail.genre.forEach((e, i) => {
-            detail.genre[i] = e.text;
+        const genres = [];
+        sidebar[2].select("a").forEach(e => {
+            genres.push(e.text);
         });
+        detail.genre = genres;
 
         // get chapter
         // /read/ is needed to get chapter details
